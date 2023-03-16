@@ -4,6 +4,7 @@
 
 <h1 align="center"> Desafio 2: Conversor de moneda </h1>
 <p align="left">
+<img src="https://img.shields.io/badge/STATUS-EN DESARROLLO-green">
 </p>
 
 ##  :heavy_plus_sign: Descripción general
