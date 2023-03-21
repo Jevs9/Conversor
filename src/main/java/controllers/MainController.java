@@ -153,4 +153,9 @@ public class MainController implements Initializable {
             e.printStackTrace();
         }
     }
+
+    //BOTÓN COPIAR MONEDA
+    void copiarClick(ActionEvent event){
+
+    }
 }

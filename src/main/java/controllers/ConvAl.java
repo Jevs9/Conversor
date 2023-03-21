@@ -2,7 +2,6 @@ package controllers;
 
 import com.conversor.convesor_jevs.Conversion;
 import com.conversor.convesor_jevs.FactorConversion;
-import com.conversor.convesor_jevs.LlenadoMatriz;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -16,7 +15,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class ConvAl extends MainController implements Initializable {
-
     @FXML
     private TableView tbAlmacenamiento;
     @FXML
@@ -32,7 +30,7 @@ public class ConvAl extends MainController implements Initializable {
     private ObservableList<FactorConversion> datos = FXCollections.observableArrayList();
 
     //Inicializando arreglo para el llenado de la tabla con las equivalencias
-    private ObservableList<LlenadoMatriz> datosRes = FXCollections.observableArrayList();
+    private ObservableList<FactorConversion> datosRes = FXCollections.observableArrayList();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -67,6 +65,11 @@ public class ConvAl extends MainController implements Initializable {
             FactorConversion factorConversion = (FactorConversion) datos.get(indice);
             float factorConversionFloat = Float.parseFloat(factorConversion.getFactorConversion());
             float valor = Float.parseFloat(inUserA.getText());
+            //Analizando si la entrada del usuario es un número negativo
+            if(valor < 0){
+                throw new NumberFormatException();
+            }
+            //Conversión de la entrada del usuario a bytes
             Conversion bytes = new Conversion();
             float resBytes = bytes.conversionInversa(valor, factorConversionFloat);
 
@@ -76,12 +79,12 @@ public class ConvAl extends MainController implements Initializable {
                 float factorConversionFloatAux = Float.parseFloat(factorConvAux.getFactorConversion());
                 String nombreAux = factorConvAux.getNombre();
                 Conversion aux = new Conversion();
-                float resultado = aux.conversionEstandar(resBytes,factorConversionFloatAux);
-                datosRes.add(i-1,new LlenadoMatriz(resultado, nombreAux));
+                String resultado = aux.formatoMoneda(aux.conversionEstandar(resBytes, factorConversionFloatAux));
+                datosRes.add(i-1,new FactorConversion(resultado, nombreAux));
             }
 
             columnaNombre.setCellValueFactory(new PropertyValueFactory<>("Nombre"));
-            columnaEquivalencia.setCellValueFactory(new PropertyValueFactory<>("resultadoConversion"));
+            columnaEquivalencia.setCellValueFactory(new PropertyValueFactory<>("FactorConversion"));
 
             tbAlmacenamiento.setItems(datosRes);
         //catch para enviar mensaje de alerta si el usuario No introduce valor admitido
@@ -89,8 +92,9 @@ public class ConvAl extends MainController implements Initializable {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Alerta de advertencia");
             alert.setHeaderText("Por favor ingrese un valor valido en el campo vacio!");
-            alert.setContentText("¡Solo se aceptan valores numéricos!");
+            alert.setContentText("¡Solo se aceptan valores numéricos positivos!");
             alert.showAndWait();
+            inUserA.clear();
         }
     }
 }
